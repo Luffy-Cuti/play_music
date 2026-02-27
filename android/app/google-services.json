@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1096051110790",
+    "project_id": "play-music-609a9",
+    "storage_bucket": "play-music-609a9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096051110790:android:a4bd975e577572c34eb207",
+        "android_client_info": {
+          "package_name": "com.example.play_msuci"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096051110790-0j7cggd0pq0pbdthqkcs868sqa7iev8g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.play_msuci",
+            "certificate_hash": "ffa6bb9f70b19e1f245b6d6f985292a020fa1979"
+          }
+        },
+        {
+          "client_id": "1096051110790-scrfdu8rjhjap8quvl0pedbr20og5fie.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBljG_y4b-XNtfsq4h83RqOCOb2tbSHRsE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096051110790-scrfdu8rjhjap8quvl0pedbr20og5fie.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

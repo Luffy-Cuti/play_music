@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../modules/login/login_page.dart';
+import '../../modules/login/login_page.dart' ;
 import '../../modules/home/home_page.dart';
 import '../../modules/music_detail/music_detail_page.dart';
 import '../../modules/setting/setting_page.dart';
