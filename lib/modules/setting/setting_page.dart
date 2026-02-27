@@ -16,7 +16,7 @@ class SettingPage extends StatelessWidget {
         children: [
           Obx(
             () => SwitchListTile(
-              title: Text("Đổi ngôn ngữ"),
+              title: Text("change_language".tr),
               value: controller.isVietnamese.value,
               onChanged: (v) => controller.changeLanguage(),
             ),

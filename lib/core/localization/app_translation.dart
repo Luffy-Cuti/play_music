@@ -3,11 +3,17 @@ import 'package:get/get.dart';
 class AppTranslation extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
-    'vi_VN': {
+    'vi': {
       'home': 'Trang chủ',
       'setting': 'Cài đặt',
-      'history': 'Lịch sử nghe',
+      'change_language': 'Đổi ngôn ngữ',
+      'history' : 'lịch sử',
     },
-    'en_US': {'home': 'Home', 'setting': 'Setting', 'history': 'History'},
+    'en': {
+      'home': 'Home',
+      'setting': 'Setting',
+      'change_language': 'Change language',
+      'history' : 'history',
+    },
   };
 }

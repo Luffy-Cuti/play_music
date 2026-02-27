@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'core/localization/app_translation.dart';
 import 'core/routes/app_pages.dart';
 
 void main() async {
@@ -16,6 +17,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.LOGIN,
       getPages: AppPages.pages,
+      translations: AppTranslation(),
+      locale: Locale('vi'),
+      fallbackLocale: Locale('en'),
+
     );
   }
 }
