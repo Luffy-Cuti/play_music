@@ -2,6 +2,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../data/services/notification_service.dart';
 import 'home_controller.dart';
 import '../../core/routes/app_pages.dart';
@@ -98,6 +99,12 @@ class HomePage extends StatelessWidget {
                       NotificationService.showNotification();
                     },
                     child: Text("Test Notification"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await controller.playLocal();
+                    },
+                    child: Text("Play Local MP3"),
                   ),
                 ],
               ),

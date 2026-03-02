@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   flutter:
+
     sdk: flutter
   get: ^4.6.6
   get_storage: ^2.1.1
@@ -38,6 +39,8 @@ dependencies:
   firebase_crashlytics: ^3.4.9
   flutter_local_notifications: ^17.1.2
   permission_handler: ^11.3.1
+  http: ^1.2.0
+  just_audio: ^0.9.36
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -60,6 +63,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/audio/demo.mp3
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
