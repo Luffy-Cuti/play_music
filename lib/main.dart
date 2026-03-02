@@ -7,11 +7,13 @@ import 'core/localization/app_translation.dart';
 import 'core/routes/app_pages.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
+import 'data/services/notification_service.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FlutterError.onError =
-      FirebaseCrashlytics.instance.recordFlutterFatalError;
+  await NotificationService.init();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
@@ -37,12 +39,9 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.deepPurple,
           brightness: Brightness.light,
         ),
-        appBarTheme: AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-        ),
+        appBarTheme: AppBarTheme(centerTitle: true, elevation: 0),
       ),
+    );
 
-    );;
   }
 }

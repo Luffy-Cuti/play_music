@@ -2,12 +2,15 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../data/services/notification_service.dart';
 import 'home_controller.dart';
 import '../../core/routes/app_pages.dart';
 
 class HomePage extends StatelessWidget {
   final controller = Get.put(HomeController());
   final user = FirebaseAuth.instance.currentUser;
+
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +82,24 @@ class HomePage extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(12),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                onPressed: () {
-                  FirebaseCrashlytics.instance.crash();
-                },
-                child: Text("Test Crash"),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: () {
+                      FirebaseCrashlytics.instance.crash();
+                    },
+                    child: Text("Test Crash"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      NotificationService.showNotification();
+                    },
+                    child: Text("Test Notification"),
+                  ),
+                ],
               ),
             ),
 
