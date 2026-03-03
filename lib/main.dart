@@ -7,12 +7,14 @@ import 'core/localization/app_translation.dart';
 import 'core/routes/app_pages.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
+import 'data/services/auth_controller.dart';
 import 'data/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await NotificationService.init();
+  Get.put(AuthController());
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);

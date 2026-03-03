@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:just_audio/just_audio.dart';
+import '../../data/services/auth_controller.dart';
 import '../../data/services/notification_service.dart';
 import 'home_controller.dart';
 import '../../core/routes/app_pages.dart';
 
 class HomePage extends StatelessWidget {
   final controller = Get.put(HomeController());
-  final user = FirebaseAuth.instance.currentUser;
+  final auth = Get.find<AuthController>();
+
+
 
   HomePage({super.key});
 
@@ -33,42 +36,51 @@ class HomePage extends StatelessWidget {
 
         title: Text('home'.tr, style: TextStyle(fontWeight: FontWeight.bold)),
 
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: GestureDetector(
-              onTap: () {
-                Get.toNamed(AppRoutes.SETTING);
-              },
-              child: Row(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.SETTING);
+                },
+                child: Obx(() {
+                  final user = auth.user.value;
+
+                  return Row(
                     children: [
-                      Text(
-                        user?.displayName ?? "",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            user?.displayName ?? "",
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            user?.email ?? "",
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ],
                       ),
-                      Text(user?.email ?? "", style: TextStyle(fontSize: 11)),
+                      const SizedBox(width: 8),
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundImage: user?.photoURL != null
+                            ? NetworkImage(user!.photoURL!)
+                            : null,
+                        child: user?.photoURL == null
+                            ? const Icon(Icons.person)
+                            : null,
+                      ),
                     ],
-                  ),
-                  SizedBox(width: 8),
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundImage: user?.photoURL != null
-                        ? NetworkImage(user!.photoURL!)
-                        : null,
-                    child: user?.photoURL == null ? Icon(Icons.person) : null,
-                  ),
-                ],
+                  );
+                }),
               ),
             ),
-          ),
-        ],
+          ],
       ),
 
       body: Container(
