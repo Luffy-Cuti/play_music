@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:play_msuci/core/routes/app_pages.dart';
 import 'login_controller.dart';
 
 class LoginPage extends StatelessWidget {
@@ -183,7 +184,9 @@ class LoginPage extends StatelessWidget {
                               style: TextStyle(color: Colors.grey),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.toNamed(AppRoutes.REGISTER);
+                              },
                               child: const Text(
                                 "Register Now",
                                 style: TextStyle(color: Colors.green),

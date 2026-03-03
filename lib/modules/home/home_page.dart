@@ -12,8 +12,6 @@ class HomePage extends StatelessWidget {
   final controller = Get.put(HomeController());
   final auth = Get.find<AuthController>();
 
-
-
   HomePage({super.key});
 
   @override
@@ -36,51 +34,51 @@ class HomePage extends StatelessWidget {
 
         title: Text('home'.tr, style: TextStyle(fontWeight: FontWeight.bold)),
 
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.SETTING);
-                },
-                child: Obx(() {
-                  final user = auth.user.value;
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: GestureDetector(
+              onTap: () {
+                Get.toNamed(AppRoutes.SETTING);
+              },
+              child: Obx(() {
+                final user = auth.user.value;
 
-                  return Row(
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            user?.displayName ?? "",
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                            ),
+                return Row(
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          user?.displayName ?? "",
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            user?.email ?? "",
-                            style: const TextStyle(fontSize: 11),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 8),
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundImage: user?.photoURL != null
-                            ? NetworkImage(user!.photoURL!)
-                            : null,
-                        child: user?.photoURL == null
-                            ? const Icon(Icons.person)
-                            : null,
-                      ),
-                    ],
-                  );
-                }),
-              ),
+                        ),
+                        Text(
+                          user?.email ?? "",
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 8),
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundImage: user?.photoURL != null
+                          ? NetworkImage(user!.photoURL!)
+                          : null,
+                      child: user?.photoURL == null
+                          ? const Icon(Icons.person)
+                          : null,
+                    ),
+                  ],
+                );
+              }),
             ),
-          ],
+          ),
+        ],
       ),
 
       body: Container(

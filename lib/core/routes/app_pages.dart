@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:play_msuci/modules/register/register_page.dart';
 import '../../modules/login/login_page.dart' ;
 import '../../modules/home/home_page.dart';
 import '../../modules/music_detail/music_detail_page.dart';
@@ -9,6 +10,8 @@ class AppRoutes {
   static const HOME = '/home';
   static const DETAIL = '/detail';
   static const SETTING = '/setting';
+  static const REGISTER = '/register';
+
 }
 
 class AppPages {
@@ -17,5 +20,6 @@ class AppPages {
     GetPage(name: AppRoutes.HOME, page: () => HomePage()),
     GetPage(name: AppRoutes.DETAIL, page: () => MusicDetailPage()),
     GetPage(name: AppRoutes.SETTING, page: () => SettingPage()),
+    GetPage(name: AppRoutes.REGISTER, page: () => RegisterPage()),
   ];
 }

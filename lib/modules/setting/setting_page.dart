@@ -33,7 +33,6 @@ class SettingPage extends StatelessWidget {
                   Stack(
                     alignment: Alignment.center,
                     children: [
-
                       Align(
                         alignment: Alignment.centerLeft,
                         child: IconButton(
@@ -44,7 +43,6 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
 
-
                       const Text(
                         "Profile",
                         style: TextStyle(
@@ -52,7 +50,6 @@ class SettingPage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
 
                       const Align(
                         alignment: Alignment.centerRight,
@@ -147,7 +144,7 @@ class SettingPage extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "PUBLIC PLAYLISTS",
+                  "HISTORY PLAYLISTS",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Colors.grey.shade600,
