@@ -27,4 +27,7 @@ class AuthController extends GetxController {
       Get.snackbar("Lỗi", e.message ?? "Đăng nhập thất bại");
     }
   }
+  Future<void> signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
 }

@@ -51,11 +51,28 @@ class SettingPage extends StatelessWidget {
                         ),
                       ),
 
-                      const Align(
+                      Align(
                         alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 8),
-                          child: Icon(Icons.more_vert),
+                        child: PopupMenuButton<String>(
+                          icon: const Icon(Icons.more_vert),
+                          onSelected: (value) async {
+                            if (value == "logout") {
+                              await auth.signOut();
+                              Get.offAllNamed("/login");
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: "logout",
+                              child: Row(
+                                children: [
+                                  Icon(Icons.logout, size: 20),
+                                  SizedBox(width: 10),
+                                  Text("Logout"),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

@@ -2,7 +2,6 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:just_audio/just_audio.dart';
 import '../../data/services/auth_controller.dart';
 import '../../data/services/notification_service.dart';
 import 'home_controller.dart';
@@ -17,158 +16,224 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade100,
 
-        leadingWidth: 40,
-        leading: IconButton(
-          padding: EdgeInsets.zero,
-          iconSize: 22,
-          icon: Icon(Icons.logout),
-          onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            Get.offAllNamed(AppRoutes.LOGIN);
-          },
-        ),
-
-        title: Text('home'.tr, style: TextStyle(fontWeight: FontWeight.bold)),
-
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: GestureDetector(
-              onTap: () {
-                Get.toNamed(AppRoutes.SETTING);
-              },
-              child: Obx(() {
-                final user = auth.user.value;
-
-                return Row(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          user?.displayName ?? "",
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          user?.email ?? "",
-                          style: const TextStyle(fontSize: 11),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 8),
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundImage: user?.photoURL != null
-                          ? NetworkImage(user!.photoURL!)
-                          : null,
-                      child: user?.photoURL == null
-                          ? const Icon(Icons.person)
-                          : null,
-                    ),
-                  ],
-                );
-              }),
-            ),
-          ),
-        ],
-      ),
-
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.deepPurple.shade50, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    onPressed: () {
-                      FirebaseCrashlytics.instance.crash();
-                    },
-                    child: Text("Test Crash"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      NotificationService.showNotification();
-                    },
-                    child: Text("Test Notification"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await controller.playLocal();
-                    },
-                    child: Text("Play Local MP3"),
+                  const Text(
+                    "Discover",
+                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
-            ),
 
-            Expanded(
-              child: Obx(
+              const SizedBox(height: 20),
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                height: 45,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.search, color: Colors.grey),
+                    SizedBox(width: 10),
+                    Text(
+                      "Search music...",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "New Album",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Happy Than Ever",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.music_note, color: Colors.white, size: 40),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 25),
+
+              const Text(
+                "Dev Tools",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+
+              const SizedBox(height: 10),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: () {
+                        FirebaseCrashlytics.instance.crash();
+                      },
+                      child: const Text("Crash"),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        NotificationService.showNotification();
+                      },
+                      child: const Text("Notify"),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              ElevatedButton(
+                onPressed: () async {
+                  await controller.playLocal();
+                },
+                child: const Text("Play Local MP3"),
+              ),
+
+              const SizedBox(height: 25),
+
+              const Text(
+                "News",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+
+              const SizedBox(height: 15),
+
+              Obx(
                 () => ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: controller.musicList.length,
                   itemBuilder: (context, index) {
                     final music = controller.musicList[index];
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.green.shade100,
+                          child: const Icon(
+                            Icons.music_note,
+                            color: Colors.green,
+                          ),
                         ),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Colors.deepPurple.shade100,
-                            child: Icon(
-                              Icons.music_note,
-                              color: Colors.deepPurple,
-                            ),
-                          ),
-                          title: Text(
-                            music.title,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(music.artist),
-                          trailing: Icon(
-                            Icons.play_circle_fill,
-                            color: Colors.deepPurple,
-                            size: 30,
-                          ),
-                          onTap: () {
-                            Get.toNamed(AppRoutes.DETAIL, arguments: music);
-                          },
+                        title: Text(
+                          music.title,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
+                        subtitle: Text(music.artist),
+                        trailing: const Icon(
+                          Icons.play_arrow,
+                          color: Colors.green,
+                        ),
+                        onTap: () {
+                          Get.toNamed(AppRoutes.DETAIL, arguments: music);
+                        },
                       ),
                     );
                   },
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+
+      bottomNavigationBar: Obx(() {
+        final user = auth.user.value;
+
+        return BottomNavigationBar(
+          selectedItemColor: Colors.green,
+          unselectedItemColor: Colors.grey,
+          onTap: (index) {
+            if (index == 2) {
+
+              Get.toNamed(AppRoutes.SETTING);
+            }
+          },
+          items: [
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: "Home",
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: "Search",
+            ),
+            BottomNavigationBarItem(
+              icon: CircleAvatar(
+                radius: 14,
+                backgroundImage: user?.photoURL != null
+                    ? NetworkImage(user!.photoURL!)
+                    : null,
+                child: user?.photoURL == null
+                    ? const Icon(Icons.person, size: 16)
+                    : null,
+              ),
+              label: "Profile",
+            ),
+          ],
+        );
+      }),
     );
   }
 }
