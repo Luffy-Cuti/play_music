@@ -13,7 +13,6 @@ class AuthController extends GetxController {
 
   Future<void> signIn(String email, String password) async {
     try {
-      final credential =
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -23,7 +22,7 @@ class AuthController extends GetxController {
 
 
     } on FirebaseAuthException catch (e) {
-      print("LOGIN ERROR: ${e.message}");
+
       Get.snackbar("Lỗi", e.message ?? "Đăng nhập thất bại");
     }
   }

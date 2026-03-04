@@ -63,7 +63,7 @@ class MusicDetailController extends GetxController {
   }
 
   void saveToHistory() {
-    List history = box.read("history") ?? [];
+    final List<dynamic> history = box.read("history") ?? [];
 
     if (!history.contains(music.title)) {
       history.add(music.title);

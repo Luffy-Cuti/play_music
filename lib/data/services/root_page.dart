@@ -13,7 +13,7 @@ class RootPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      print("ROOT REBUILD: ${authController.user.value?.email}");
+
 
       return authController.user.value == null
           ? LoginPage()

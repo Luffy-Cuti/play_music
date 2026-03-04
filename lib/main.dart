@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ import 'data/services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await GetStorage.init();
   await NotificationService.init();
   Get.put(AuthController());
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -26,6 +28,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -33,8 +37,8 @@ class MyApp extends StatelessWidget {
       home: RootPage(),
       getPages: AppPages.pages,
       translations: AppTranslation(),
-      locale: Locale('vi'),
-      fallbackLocale: Locale('en'),
+      locale: const Locale('vi'),
+      fallbackLocale: const Locale('en'),
 
       theme: ThemeData(
         useMaterial3: true,
@@ -45,6 +49,5 @@ class MyApp extends StatelessWidget {
         appBarTheme: AppBarTheme(centerTitle: true, elevation: 0),
       ),
     );
-
   }
 }

@@ -13,7 +13,7 @@ class SettingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List history = box.read("history") ?? [];
+    final List<dynamic> history = box.read("history") ?? [];
 
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
@@ -187,7 +187,7 @@ class SettingPage extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                      history[index],
+                      history[index].toString(),
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                     subtitle: const Text("5:33"),

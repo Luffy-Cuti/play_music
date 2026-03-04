@@ -31,8 +31,7 @@ class MusicDetailPage extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
-                  controller.music.image ??
-                      "https://cdn-media.sforum.vn/storage/app/media/thunguyen/hinh-nen-vui-ve-2.jpg",
+                  controller.music.image,
                   height: 250,
                   width: 250,
                   fit: BoxFit.cover,

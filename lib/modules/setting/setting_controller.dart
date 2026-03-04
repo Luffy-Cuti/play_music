@@ -6,9 +6,11 @@ class SettingController extends GetxController {
 
   void changeLanguage() {
     if (Get.locale?.languageCode == 'vi') {
-      Get.updateLocale(Locale('en', 'US'));
+      isVietnamese.value = false;
+      Get.updateLocale(const Locale('en', 'US'));
     } else {
-      Get.updateLocale(Locale('vi', 'VN'));
+      isVietnamese.value = true;
+      Get.updateLocale(const Locale('vi', 'VN'));
     }
   }
 }
