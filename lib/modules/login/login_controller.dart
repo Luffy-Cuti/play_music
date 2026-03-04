@@ -1,11 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../core/routes/app_pages.dart';
+import '../../data/services/root_page.dart';
 
 class LoginController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   var isLoading = false.obs;
 
@@ -21,8 +25,7 @@ class LoginController extends GetxController {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+      final googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -31,7 +34,7 @@ class LoginController extends GetxController {
 
       await _auth.signInWithCredential(credential);
 
-      Get.offAllNamed(AppRoutes.HOME);
+      Get.offAll(() => RootPage());
 
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -43,6 +46,6 @@ class LoginController extends GetxController {
   Future<void> signOut() async {
     await _googleSignIn.signOut();
     await _auth.signOut();
-    Get.offAllNamed(AppRoutes.LOGIN);
+
   }
 }

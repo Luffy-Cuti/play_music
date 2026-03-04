@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:play_msuci/modules/register/register_controller.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
+  final controller = Get.put(RegisterController());
+
+  RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 40),
 
                 TextField(
+                  controller: controller.fullNameController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: "Full Name",
@@ -60,6 +64,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 TextField(
+                  controller: controller.emailController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: "Enter Email",
@@ -80,6 +85,8 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 TextField(
+                  controller: controller.passwordController,
+
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
@@ -104,23 +111,29 @@ class RegisterPage extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : controller.register,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                       ),
-                    ),
-                    onPressed: () {},
-                    child: const Text(
-                      "Create Account",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      child: controller.isLoading.value
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                              "Create Account",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
