@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:get_storage/get_storage.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,7 +7,6 @@ import 'package:play_msuci/data/services/root_page.dart';
 import 'core/localization/app_translation.dart';
 import 'core/routes/app_pages.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-
 import 'data/services/auth_controller.dart';
 import 'data/services/notification_service.dart';
 

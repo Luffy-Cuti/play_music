@@ -18,14 +18,11 @@ class AuthController extends GetxController {
         password: password,
       );
       Get.offAll(() => RootPage());
-
-
-
     } on FirebaseAuthException catch (e) {
-
       Get.snackbar("Lỗi", e.message ?? "Đăng nhập thất bại");
     }
   }
+
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();
   }

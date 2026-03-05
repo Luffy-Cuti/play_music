@@ -129,11 +129,40 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              ElevatedButton(
-                onPressed: () async {
-                  await controller.playLocal();
-                },
-                child: const Text("Play Local MP3"),
+              Obx(
+                    () => ElevatedButton.icon(
+                  onPressed: controller.isPreparingLocal.value
+                      ? null
+                      : () async {
+                    await controller.playLocal();
+                    final error = controller.localPlayError.value;
+                    if (error != null) {
+                      Get.snackbar(
+                        'Local audio',
+                        error,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    }
+                  },
+                  icon: controller.isPreparingLocal.value
+                      ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : Icon(
+                    controller.isLocalPlaying.value
+                        ? Icons.pause
+                        : Icons.play_arrow,
+                  ),
+                  label: Text(
+                    controller.isPreparingLocal.value
+                        ? 'Đang tải Local MP3...'
+                        : controller.isLocalPlaying.value
+                        ? 'Pause Local MP3'
+                        : 'Play Local MP3',
+                  ),
+                ),
               ),
 
               const SizedBox(height: 25),
@@ -206,7 +235,6 @@ class HomePage extends StatelessWidget {
           unselectedItemColor: Colors.grey,
           onTap: (index) {
             if (index == 2) {
-
               Get.toNamed(AppRoutes.SETTING);
             }
           },
