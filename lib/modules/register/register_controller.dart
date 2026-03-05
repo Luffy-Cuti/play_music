@@ -8,21 +8,19 @@ class RegisterController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  var isLoading = false.obs;
+  final isLoading = false.obs;
 
   Future<void> register() async {
     try {
       isLoading.value = true;
 
-      final credential =
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim(),
+          );
 
-
-      await credential.user!
-          .updateDisplayName(fullNameController.text.trim());
+      await credential.user!.updateDisplayName(fullNameController.text.trim());
 
       await credential.user!.reload();
 
@@ -34,5 +32,13 @@ class RegisterController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  @override
+  void onClose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
   }
 }

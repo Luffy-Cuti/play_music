@@ -11,14 +11,13 @@ class LoginController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  var isLoading = false.obs;
+  final isLoading = false.obs;
 
   Future<void> signInWithGoogle() async {
     try {
       isLoading.value = true;
 
-      final GoogleSignInAccount? googleUser =
-      await _googleSignIn.signIn();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
         isLoading.value = false;
@@ -34,7 +33,7 @@ class LoginController extends GetxController {
 
       await _auth.signInWithCredential(credential);
 
-      Get.offAll(() => RootPage());
+
 
     } catch (e) {
       Get.snackbar("Error", e.toString());
@@ -47,5 +46,10 @@ class LoginController extends GetxController {
     await _googleSignIn.signOut();
     await _auth.signOut();
 
+  }
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
   }
 }

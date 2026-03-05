@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:play_msuci/data/services/root_page.dart';
 
 class AuthController extends GetxController {
-  var user = Rxn<User>();
+  final user = Rxn<User>();
 
   @override
   void onInit() {
@@ -17,7 +17,7 @@ class AuthController extends GetxController {
         email: email,
         password: password,
       );
-      Get.offAll(() => RootPage());
+
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Lỗi", e.message ?? "Đăng nhập thất bại");
     }
