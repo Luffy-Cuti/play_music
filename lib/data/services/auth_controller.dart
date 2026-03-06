@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:play_msuci/data/services/root_page.dart';
+import 'package:play_msuci/core/routes/app_pages.dart';
 
 class AuthController extends GetxController {
   final user = Rxn<User>();
@@ -17,7 +17,7 @@ class AuthController extends GetxController {
         email: email,
         password: password,
       );
-
+      Get.offAllNamed(AppRoutes.HOME);
     } on FirebaseAuthException catch (e) {
       Get.snackbar("Lỗi", e.message ?? "Đăng nhập thất bại");
     }
