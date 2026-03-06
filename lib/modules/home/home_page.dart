@@ -127,43 +127,6 @@ class HomePage extends StatelessWidget {
                 ],
               ),
 
-              const SizedBox(height: 10),
-
-              Obx(
-                () => ElevatedButton.icon(
-                  onPressed: controller.isPreparingLocal.value
-                      ? null
-                      : () async {
-                          await controller.playLocal();
-                          final error = controller.localPlayError.value;
-                          if (error != null) {
-                            Get.snackbar(
-                              'Local audio',
-                              error,
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
-                          }
-                        },
-                  icon: controller.isPreparingLocal.value
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Icon(
-                          controller.isLocalPlaying.value
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                        ),
-                  label: Text(
-                    controller.isPreparingLocal.value
-                        ? 'Đang tải Local MP3...'
-                        : controller.isLocalPlaying.value
-                        ? 'Pause Local MP3'
-                        : 'Play Local MP3',
-                  ),
-                ),
-              ),
 
               const SizedBox(height: 25),
 
@@ -210,9 +173,34 @@ class HomePage extends StatelessWidget {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(music.artist),
-                        trailing: const Icon(
-                          Icons.play_arrow,
-                          color: Colors.green,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (music.url.startsWith('asset://'))
+                              Container(
+                                margin: const EdgeInsets.only(right: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  'Local',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            const Icon(
+                              Icons.play_arrow,
+                              color: Colors.green,
+                            ),
+                          ],
                         ),
                         onTap: () {
                           Get.toNamed(AppRoutes.DETAIL, arguments: music);

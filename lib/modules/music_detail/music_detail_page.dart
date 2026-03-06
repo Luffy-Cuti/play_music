@@ -13,6 +13,42 @@ class MusicDetailPage extends StatelessWidget {
     return "$minutes:$seconds";
   }
 
+  Widget _buildArtwork() {
+    final image = controller.music.image.trim();
+
+    if (image.startsWith('http://') || image.startsWith('https://')) {
+      return Image.network(
+        image,
+        height: 250,
+        width: 250,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _fallbackArtwork(),
+      );
+    }
+
+    if (image.isNotEmpty) {
+      return Image.asset(
+        image,
+        height: 250,
+        width: 250,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _fallbackArtwork(),
+      );
+    }
+
+    return _fallbackArtwork();
+  }
+
+  Widget _fallbackArtwork() {
+    return Container(
+      height: 250,
+      width: 250,
+      color: Colors.grey.shade900,
+      alignment: Alignment.center,
+      child: const Icon(Icons.music_note, color: Colors.green, size: 72),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,12 +66,7 @@ class MusicDetailPage extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  controller.music.image,
-                  height: 250,
-                  width: 250,
-                  fit: BoxFit.cover,
-                ),
+                child: _buildArtwork(),
               ),
             ),
 

@@ -21,21 +21,17 @@ class MusicDetailController extends GetxController {
     music = Get.arguments;
     saveToHistory();
 
-
     loadMusic();
-
 
     player.positionStream.listen((pos) {
       position.value = pos;
     });
-
 
     player.durationStream.listen((dur) {
       if (dur != null) {
         duration.value = dur;
       }
     });
-
 
     player.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
@@ -44,7 +40,18 @@ class MusicDetailController extends GetxController {
 
   Future<void> loadMusic() async {
     try {
-      await player.setAsset('assets/audio/demo.mp3');
+      final source = music.url.trim();
+
+      if (source.startsWith('asset://')) {
+        await player.setAsset(source.replaceFirst('asset://', ''));
+      } else if (source.startsWith('file://')) {
+        await player.setFilePath(source.replaceFirst('file://', ''));
+      } else if (source.startsWith('http://') ||
+          source.startsWith('https://')) {
+        await player.setUrl(source);
+      } else {
+        await player.setAsset('assets/audio/demo.mp3');
+      }
     } catch (e) {
       print("LOAD ERROR: $e");
     }
