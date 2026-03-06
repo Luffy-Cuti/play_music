@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../data/models/music_model.dart';
 
 class MusicDetailController extends GetxController {
@@ -43,18 +47,41 @@ class MusicDetailController extends GetxController {
       final source = music.url.trim();
 
       if (source.startsWith('asset://')) {
-        await player.setAsset(source.replaceFirst('asset://', ''));
+        final assetPath = source.replaceFirst('asset://', '');
+        await player.setFilePath(await _cacheAssetToLocalFile(assetPath));
       } else if (source.startsWith('file://')) {
         await player.setFilePath(source.replaceFirst('file://', ''));
       } else if (source.startsWith('http://') ||
           source.startsWith('https://')) {
         await player.setUrl(source);
       } else {
-        await player.setAsset('assets/audio/demo.mp3');
+        await _loadDefaultTrack();
       }
     } catch (e) {
       print("LOAD ERROR: $e");
+      await _loadDefaultTrack();
     }
+  }
+  Future<void> _loadDefaultTrack() async {
+    final localPath = await _cacheAssetToLocalFile('assets/audio/demo.mp3');
+    await player.setFilePath(localPath);
+  }
+
+  Future<String> _cacheAssetToLocalFile(String assetPath) async {
+    final tempDir = await getTemporaryDirectory();
+    final fileName = assetPath.split('/').last;
+    final localFile = File('${tempDir.path}/$fileName');
+
+    if (!await localFile.exists()) {
+      final data = await rootBundle.load(assetPath);
+      final bytes = data.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
+      await localFile.writeAsBytes(bytes, flush: true);
+    }
+
+    return localFile.path;
   }
 
   void togglePlay() async {

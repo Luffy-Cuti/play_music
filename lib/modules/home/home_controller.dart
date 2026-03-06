@@ -20,7 +20,7 @@ class HomeController extends GetxController {
       title: "Shape of You",
       artist: "Ed Sheeran",
       image: "https://i.scdn.co/image/ab67616d0000b273...",
-      url: "",
+      url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     ),
     MusicModel(
       id: "2",
@@ -28,7 +28,7 @@ class HomeController extends GetxController {
       artist: "Wiz Khalifa",
       image:
           "https://cdn-media.sforum.vn/storage/app/media/thunguyen/hinh-nen-vui-ve-2.jpg",
-      url: "",
+      url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
     ),
   ].obs;
 }
