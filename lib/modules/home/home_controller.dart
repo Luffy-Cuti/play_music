@@ -16,19 +16,18 @@ class HomeController extends GetxController {
       url: "asset://assets/audio/demo.mp3",
     ),
     MusicModel(
-      id: "1",
-      title: "Shape of You",
-      artist: "Ed Sheeran",
-      image: "https://i.scdn.co/image/ab67616d0000b273...",
-      url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      id: 'local_2',
+      title: 'Shape of You',
+      artist: 'Ed Sheeran',
+      image: '',
+      url: 'asset://assets/audio/Shape of you.mp3',
     ),
     MusicModel(
-      id: "2",
-      title: "See You Again",
-      artist: "Wiz Khalifa",
-      image:
-          "https://cdn-media.sforum.vn/storage/app/media/thunguyen/hinh-nen-vui-ve-2.jpg",
-      url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      id: 'local_3',
+      title: 'See You Again',
+      artist: 'Wiz Khalifa',
+      image: '',
+      url: 'asset://assets/audio/See you again.mp3',
     ),
   ].obs;
 }

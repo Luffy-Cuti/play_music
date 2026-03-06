@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'music_detail_controller.dart';
 
-class MusicDetailPage extends StatelessWidget {
-  final controller = Get.put(MusicDetailController());
-
-  MusicDetailPage({super.key});
+class MusicDetailPage extends GetView<MusicDetailController> {
+  const MusicDetailPage({super.key});
 
   String formatDuration(Duration d) {
     final minutes = d.inMinutes.remainder(60).toString().padLeft(2, '0');
