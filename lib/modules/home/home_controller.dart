@@ -7,13 +7,13 @@ import 'package:path_provider/path_provider.dart';
 import '../../data/models/music_model.dart';
 
 class HomeController extends GetxController {
-  var musicList = <MusicModel>[
+  final musicList = <MusicModel>[
     MusicModel(
-      id: "local_1",
-      title: "Local Demo",
-      artist: "On-device",
-      image: "",
-      url: "asset://assets/audio/demo.mp3",
+      id: 'local_1',
+      title: 'Local Demo',
+      artist: 'On-device',
+      image: '',
+      url: 'asset://assets/audio/demo.mp3',
     ),
     MusicModel(
       id: 'local_2',
@@ -30,4 +30,5 @@ class HomeController extends GetxController {
       url: 'asset://assets/audio/See you again.mp3',
     ),
   ].obs;
+
 }
