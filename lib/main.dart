@@ -13,29 +13,52 @@ import 'package:just_audio_background/just_audio_background.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await GetStorage.init();
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.example.play_music.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
-  await NotificationService.init();
-  Get.put(AuthController());
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+  Object? startupError;
 
-  runApp(MyApp());
+  try {
+    await Firebase.initializeApp();
+    await GetStorage.init();
+    await JustAudioBackground.init(
+      androidNotificationChannelId: 'com.example.play_music.channel.audio',
+      androidNotificationChannelName: 'Audio playback',
+      androidNotificationOngoing: true,
+    );
+    await NotificationService.init();
+    Get.put(AuthController());
+
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  } catch (e) {
+    startupError = e;
+  }
+
+  runApp(MyApp(startupError: startupError));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, this.startupError});
+
+  final Object? startupError;
 
   @override
   Widget build(BuildContext context) {
+    if (startupError != null) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          appBar: AppBar(title: const Text('Startup error')),
+          body: Padding(
+            padding: const EdgeInsets.all(16),
+            child: SelectableText(
+              'Ứng dụng không khởi động được.\n\nChi tiết lỗi:\n$startupError',
+            ),
+          ),
+        ),
+      );
+    }
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: RootPage(),
@@ -50,7 +73,7 @@ class MyApp extends StatelessWidget {
           seedColor: Colors.deepPurple,
           brightness: Brightness.light,
         ),
-        appBarTheme: AppBarTheme(centerTitle: true, elevation: 0),
+        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       ),
     );
   }
