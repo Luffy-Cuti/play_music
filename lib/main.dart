@@ -9,11 +9,17 @@ import 'core/routes/app_pages.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'data/services/auth_controller.dart';
 import 'data/services/notification_service.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await GetStorage.init();
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.example.play_music.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
   await NotificationService.init();
   Get.put(AuthController());
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;

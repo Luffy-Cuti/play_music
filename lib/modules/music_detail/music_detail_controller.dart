@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:path_provider/path_provider.dart';
+
+import 'package:just_audio_background/just_audio_background.dart';
 import '../../data/models/music_model.dart';
 
 class MusicDetailController extends GetxController {
@@ -55,10 +54,17 @@ class MusicDetailController extends GetxController {
         final assetPath = source.replaceFirst('asset://', '');
         await _setAssetWithFallback(assetPath);
       } else if (source.startsWith('file://')) {
-        await player.setFilePath(source.replaceFirst('file://', ''));
+        await player.setAudioSource(
+          AudioSource.uri(
+            Uri.file(source.replaceFirst('file://', '')),
+            tag: _mediaItem,
+          ),
+        );
       } else if (source.startsWith('http://') ||
           source.startsWith('https://')) {
-        await player.setUrl(source);
+        await player.setAudioSource(
+          AudioSource.uri(Uri.parse(source), tag: _mediaItem),
+        );
       } else {
         await _setAssetWithFallback('assets/audio/Shape of you.mp3');
       }
@@ -72,6 +78,13 @@ class MusicDetailController extends GetxController {
     }
   }
 
+  MediaItem get _mediaItem => MediaItem(
+    id: music.id,
+    album: 'Play Music',
+    title: music.title,
+    artist: music.artist,
+  );
+
   Future<void> _setAssetWithFallback(String primaryAsset) async {
     final candidates = <String>[
       primaryAsset,
@@ -84,10 +97,9 @@ class MusicDetailController extends GetxController {
 
     for (final asset in candidates) {
       try {
-        await player.setAsset(asset);
+        await player.setAudioSource(AudioSource.asset(asset, tag: _mediaItem));
         if (asset != primaryAsset) {
-          playbackMessage.value =
-              'File gốc gặp lỗi, đang phát bản thay thế khả dụng.';
+          playbackMessage.value = 'File gốc gặp lỗi, đang phát bản thay thế';
         }
         return;
       } catch (error) {
@@ -96,7 +108,7 @@ class MusicDetailController extends GetxController {
       }
     }
 
-    throw Exception('Không thể load bất kỳ file audio nào. $lastError');
+    throw Exception('Không thể load bất kỳ file  $lastError');
   }
 
   void togglePlay() async {
