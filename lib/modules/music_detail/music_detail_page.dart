@@ -119,16 +119,30 @@ class MusicDetailPage extends GetView<MusicDetailController> {
 
             const SizedBox(height: 30),
 
-            IconButton(
-              iconSize: 90,
-              color: Colors.green,
-              icon: Icon(
-                controller.isPlaying.value
-                    ? Icons.pause_circle_filled
-                    : Icons.play_circle_fill,
+            if (controller.playbackMessage.value.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  controller.playbackMessage.value,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.orange, fontSize: 13),
+                ),
               ),
-              onPressed: controller.togglePlay,
-            ),
+            if (controller.playbackMessage.value.isNotEmpty)
+              const SizedBox(height: 12),
+
+            controller.isLoading.value
+                ? const CircularProgressIndicator(color: Colors.green)
+                : IconButton(
+                    iconSize: 90,
+                    color: Colors.green,
+                    icon: Icon(
+                      controller.isPlaying.value
+                          ? Icons.pause_circle_filled
+                          : Icons.play_circle_fill,
+                    ),
+                    onPressed: controller.togglePlay,
+                  ),
           ],
         ),
       ),

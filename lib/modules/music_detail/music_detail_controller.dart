@@ -12,6 +12,8 @@ class MusicDetailController extends GetxController {
   final AudioPlayer player = AudioPlayer();
 
   RxBool isPlaying = false.obs;
+  RxBool isLoading = true.obs;
+  RxString playbackMessage = ''.obs;
   Rx<Duration> position = Duration.zero.obs;
   Rx<Duration> duration = Duration.zero.obs;
 
@@ -44,27 +46,57 @@ class MusicDetailController extends GetxController {
   }
 
   Future<void> loadMusic() async {
+    isLoading.value = true;
+    playbackMessage.value = '';
     try {
       final source = music.url.trim();
 
       if (source.startsWith('asset://')) {
         final assetPath = source.replaceFirst('asset://', '');
-        await player.setAsset(assetPath);
+        await _setAssetWithFallback(assetPath);
       } else if (source.startsWith('file://')) {
         await player.setFilePath(source.replaceFirst('file://', ''));
       } else if (source.startsWith('http://') ||
           source.startsWith('https://')) {
         await player.setUrl(source);
       } else {
-        await _loadDefaultTrack();
+        await _setAssetWithFallback('assets/audio/Shape of you.mp3');
       }
     } catch (e) {
       debugPrint('LOAD ERROR for "${music.title}" (${music.url}): $e');
-      await _loadDefaultTrack();
+      playbackMessage.value =
+          'Không phát được bài đã chọn. Đã chuyển sang bản dự phòng.';
+      await _setAssetWithFallback('assets/audio/Shape of you.mp3');
+    } finally {
+      isLoading.value = false;
     }
   }
-  Future<void> _loadDefaultTrack() async {
-    await player.setAsset('assets/audio/demo.mp3');
+
+  Future<void> _setAssetWithFallback(String primaryAsset) async {
+    final candidates = <String>[
+      primaryAsset,
+      'assets/audio/Shape of you.mp3',
+      'assets/audio/See you again.mp3',
+      'assets/audio/demo.mp3',
+    ].toSet().toList();
+
+    Object? lastError;
+
+    for (final asset in candidates) {
+      try {
+        await player.setAsset(asset);
+        if (asset != primaryAsset) {
+          playbackMessage.value =
+              'File gốc gặp lỗi, đang phát bản thay thế khả dụng.';
+        }
+        return;
+      } catch (error) {
+        lastError = error;
+        debugPrint('ASSET LOAD FAIL: $asset -> $error');
+      }
+    }
+
+    throw Exception('Không thể load bất kỳ file audio nào. $lastError');
   }
 
   void togglePlay() async {
