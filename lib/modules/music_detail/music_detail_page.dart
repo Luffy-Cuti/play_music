@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'music_detail_controller.dart';
+import '../../core/routes/app_pages.dart';
 
 class MusicDetailPage extends GetView<MusicDetailController> {
   const MusicDetailPage({super.key});
@@ -23,7 +24,6 @@ class MusicDetailPage extends GetView<MusicDetailController> {
         errorBuilder: (_, __, ___) => _fallbackArtwork(),
       );
     }
-
     if (image.isNotEmpty) {
       return Image.asset(
         image,
@@ -84,6 +84,26 @@ class MusicDetailPage extends GetView<MusicDetailController> {
             Text(
               controller.music.artist,
               style: const TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+
+            OutlinedButton.icon(
+              onPressed: () {
+                final query = Uri.encodeComponent(
+                  '${controller.music.title} ${controller.music.artist} lyrics',
+                );
+
+                Get.toNamed(
+                  AppRoutes.WEBVIEW,
+                  arguments: {
+                    'title': 'Lyrics & Info',
+                    'url': 'https://www.google.com/search?q=' + query,
+                  },
+                );
+              },
+              icon: const Icon(Icons.library_music),
+              label: const Text('Lyrics & Info'),
+              style: OutlinedButton.styleFrom(foregroundColor: Colors.green),
             ),
 
             const SizedBox(height: 30),

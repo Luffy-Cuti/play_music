@@ -127,7 +127,6 @@ class HomePage extends StatelessWidget {
                 ],
               ),
 
-
               const SizedBox(height: 25),
 
               const Text(
@@ -196,10 +195,7 @@ class HomePage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            const Icon(
-                              Icons.play_arrow,
-                              color: Colors.green,
-                            ),
+                            const Icon(Icons.play_arrow, color: Colors.green),
                           ],
                         ),
                         onTap: () {
