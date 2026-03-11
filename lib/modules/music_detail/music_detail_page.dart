@@ -105,6 +105,49 @@ class MusicDetailPage extends GetView<MusicDetailController> {
               label: const Text('Lyrics & Info'),
               style: OutlinedButton.styleFrom(foregroundColor: Colors.green),
             ),
+            const SizedBox(height: 12),
+
+            if (controller.downloadTask.value != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    LinearProgressIndicator(
+                      value: (controller.downloadTask.value!.progress / 100).clamp(0.0, 1.0),
+                      color: Colors.green,
+                      backgroundColor: Colors.white24,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Download: ${controller.downloadTask.value!.status} (${controller.downloadTask.value!.progress}%)',
+                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 12),
+
+            OutlinedButton.icon(
+              onPressed: controller.isDownloading
+                  ? controller.cancelDownload
+                  : controller.startDownload,
+              icon: Icon(
+                controller.isDownloading
+                    ? Icons.cancel
+                    : controller.isDownloaded
+                    ? Icons.check_circle
+                    : Icons.download,
+              ),
+              label: Text(
+                controller.isDownloading
+                    ? 'Hủy tải'
+                    : controller.isDownloaded
+                    ? 'Đã tải offline'
+                    : 'Tải xuống offline',
+              ),
+              style: OutlinedButton.styleFrom(foregroundColor: Colors.green),
+            ),
 
             const SizedBox(height: 30),
 

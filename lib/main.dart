@@ -9,7 +9,10 @@ import 'core/routes/app_pages.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'data/services/auth_controller.dart';
 import 'data/services/notification_service.dart';
+
 import 'package:just_audio_background/just_audio_background.dart';
+
+import 'modules/download/download_manager_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +28,7 @@ void main() async {
     );
     await NotificationService.init();
     Get.put(AuthController());
+    Get.put(DownloadManagerService(), permanent: true);
 
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
     PlatformDispatcher.instance.onError = (error, stack) {

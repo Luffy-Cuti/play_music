@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 
 import 'package:get/get.dart';
@@ -6,15 +8,20 @@ import 'package:just_audio/just_audio.dart';
 
 import 'package:just_audio_background/just_audio_background.dart';
 import '../../data/models/music_model.dart';
+import '../download/download_manager_service.dart';
+import '../download/download_task_model.dart';
 
 class MusicDetailController extends GetxController {
   final AudioPlayer player = AudioPlayer();
+  final DownloadManagerService downloadManager =
+      Get.find<DownloadManagerService>();
 
   RxBool isPlaying = false.obs;
   RxBool isLoading = true.obs;
   RxString playbackMessage = ''.obs;
   Rx<Duration> position = Duration.zero.obs;
   Rx<Duration> duration = Duration.zero.obs;
+  Rxn<DownloadTaskModel> downloadTask = Rxn<DownloadTaskModel>();
 
   late MusicModel music;
 
@@ -25,6 +32,12 @@ class MusicDetailController extends GetxController {
     super.onInit();
 
     music = Get.arguments as MusicModel;
+    downloadTask.value = downloadManager.taskFor(music.id);
+
+    ever<Map<String, DownloadTaskModel>>(downloadManager.tasks, (_) {
+      downloadTask.value = downloadManager.taskFor(music.id);
+    });
+
     saveToHistory();
 
     loadMusic();
@@ -48,6 +61,14 @@ class MusicDetailController extends GetxController {
     isLoading.value = true;
     playbackMessage.value = '';
     try {
+      final downloadedPath = downloadManager.localPathFor(music.id);
+      if (downloadedPath != null && File(downloadedPath).existsSync()) {
+        await player.setAudioSource(
+          AudioSource.uri(Uri.file(downloadedPath), tag: _mediaItem),
+        );
+        playbackMessage.value = 'Đang phát từ bản tải offline';
+        return;
+      }
       final source = music.url.trim();
 
       if (source.startsWith('asset://')) {
@@ -84,6 +105,23 @@ class MusicDetailController extends GetxController {
     title: music.title,
     artist: music.artist,
   );
+
+  bool get isDownloading => downloadTask.value?.status == 'downloading';
+
+  bool get isDownloaded => downloadTask.value?.status == 'completed';
+
+  Future<void> startDownload() async {
+    await downloadManager.downloadSong(music);
+    if (downloadTask.value?.status == 'completed') {
+      playbackMessage.value =
+          'Tải xong, lần phát tiếp theo sẽ ưu tiên bản offline';
+      await loadMusic();
+    }
+  }
+
+  Future<void> cancelDownload() async {
+    await downloadManager.cancelDownload(music.id);
+  }
 
   Future<void> _setAssetWithFallback(String primaryAsset) async {
     final candidates = <String>[
