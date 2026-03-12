@@ -8,8 +8,8 @@ import 'package:just_audio/just_audio.dart';
 
 import 'package:just_audio_background/just_audio_background.dart';
 import '../../data/models/music_model.dart';
-import '../download/download_manager_service.dart';
-import '../download/download_task_model.dart';
+import '../../data/services/download_manager_service.dart';
+import '../../data/models/download_task_model.dart';
 
 class MusicDetailController extends GetxController {
   final AudioPlayer player = AudioPlayer();
@@ -22,8 +22,10 @@ class MusicDetailController extends GetxController {
   Rx<Duration> position = Duration.zero.obs;
   Rx<Duration> duration = Duration.zero.obs;
   Rxn<DownloadTaskModel> downloadTask = Rxn<DownloadTaskModel>();
+  RxInt currentIndex = 0.obs;
 
   late MusicModel music;
+  late List<MusicModel> queue;
 
   final box = GetStorage();
 
@@ -31,11 +33,11 @@ class MusicDetailController extends GetxController {
   void onInit() {
     super.onInit();
 
-    music = Get.arguments as MusicModel;
-    downloadTask.value = downloadManager.taskFor(music.id);
+    _setupQueueFromArguments();
+    _syncDownloadTask();
 
     ever<Map<String, DownloadTaskModel>>(downloadManager.tasks, (_) {
-      downloadTask.value = downloadManager.taskFor(music.id);
+      _syncDownloadTask();
     });
 
     saveToHistory();
@@ -47,19 +49,47 @@ class MusicDetailController extends GetxController {
     });
 
     player.durationStream.listen((dur) {
-      if (dur != null) {
-        duration.value = dur;
-      }
+      duration.value = dur ?? Duration.zero;
     });
 
     player.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
+      if (state.processingState == ProcessingState.completed) {
+        playNext();
+      }
     });
+  }
+
+  void _setupQueueFromArguments() {
+    final args = Get.arguments;
+    if (args is Map<String, dynamic> && args['music'] is MusicModel) {
+      final queueArg = args['queue'];
+      final indexArg = args['index'];
+      queue = (queueArg is List<MusicModel> && queueArg.isNotEmpty)
+          ? queueArg
+          : <MusicModel>[args['music'] as MusicModel];
+
+      if (indexArg is int && indexArg >= 0 && indexArg < queue.length) {
+        currentIndex.value = indexArg;
+      }
+
+      music = queue[currentIndex.value];
+      return;
+    }
+
+    music = args as MusicModel;
+    queue = <MusicModel>[music];
+  }
+
+  void _syncDownloadTask() {
+    downloadTask.value = downloadManager.taskFor(music.id);
   }
 
   Future<void> loadMusic() async {
     isLoading.value = true;
     playbackMessage.value = '';
+    position.value = Duration.zero;
+    duration.value = Duration.zero;
     try {
       final downloadedPath = downloadManager.localPathFor(music.id);
       if (downloadedPath != null && File(downloadedPath).existsSync()) {
@@ -67,35 +97,38 @@ class MusicDetailController extends GetxController {
           AudioSource.uri(Uri.file(downloadedPath), tag: _mediaItem),
         );
         playbackMessage.value = 'Đang phát từ bản tải offline';
-        return;
-      }
-      final source = music.url.trim();
-
-      if (source.startsWith('asset://')) {
-        final assetPath = source.replaceFirst('asset://', '');
-        await _setAssetWithFallback(assetPath);
-      } else if (source.startsWith('file://')) {
-        await player.setAudioSource(
-          AudioSource.uri(
-            Uri.file(source.replaceFirst('file://', '')),
-            tag: _mediaItem,
-          ),
-        );
-      } else if (source.startsWith('http://') ||
-          source.startsWith('https://')) {
-        await player.setAudioSource(
-          AudioSource.uri(Uri.parse(source), tag: _mediaItem),
-        );
       } else {
-        await _setAssetWithFallback('assets/audio/Shape of you.mp3');
+        final source = music.url.trim();
+
+        if (source.startsWith('asset://')) {
+          final assetPath = source.replaceFirst('asset://', '');
+          await _setAssetWithFallback(assetPath);
+        } else if (source.startsWith('file://')) {
+          await player.setAudioSource(
+            AudioSource.uri(
+              Uri.file(source.replaceFirst('file://', '')),
+              tag: _mediaItem,
+            ),
+          );
+        } else if (source.startsWith('http://') ||
+            source.startsWith('https://')) {
+          await player.setAudioSource(
+            AudioSource.uri(Uri.parse(source), tag: _mediaItem),
+          );
+        } else {
+          await _setAssetWithFallback('assets/audio/Shape of you.mp3');
+        }
       }
+      await player.play();
     } catch (e) {
       debugPrint('LOAD ERROR for "${music.title}" (${music.url}): $e');
       playbackMessage.value =
           'Không phát được bài đã chọn. Đã chuyển sang bản dự phòng.';
       await _setAssetWithFallback('assets/audio/Shape of you.mp3');
+      await player.play();
     } finally {
       isLoading.value = false;
+      _syncDownloadTask();
     }
   }
 
@@ -109,6 +142,10 @@ class MusicDetailController extends GetxController {
   bool get isDownloading => downloadTask.value?.status == 'downloading';
 
   bool get isDownloaded => downloadTask.value?.status == 'completed';
+
+  bool get hasPrevious => currentIndex.value > 0;
+
+  bool get hasNext => currentIndex.value < queue.length - 1;
 
   Future<void> startDownload() async {
     await downloadManager.downloadSong(music);
@@ -149,7 +186,7 @@ class MusicDetailController extends GetxController {
     throw Exception('Không thể load bất kỳ file  $lastError');
   }
 
-  void togglePlay() async {
+  Future<void> togglePlay() async {
     if (player.playing) {
       await player.pause();
     } else {
@@ -157,8 +194,46 @@ class MusicDetailController extends GetxController {
     }
   }
 
-  void seekTo(Duration newPosition) async {
+  Future<void> seekTo(Duration newPosition) async {
     await player.seek(newPosition);
+  }
+  Future<void> seekRelative(int seconds) async {
+    final total = duration.value;
+    final target = position.value + Duration(seconds: seconds);
+    final min = Duration.zero;
+    final max = total > Duration.zero ? total : target;
+    if (target < min) {
+      await seekTo(min);
+      return;
+    }
+    if (target > max) {
+      await seekTo(max);
+      return;
+    }
+    await seekTo(target);
+  }
+
+  Future<void> playNext() async {
+    if (!hasNext) {
+      await player.seek(Duration.zero);
+      await player.pause();
+      return;
+    }
+    currentIndex.value += 1;
+    music = queue[currentIndex.value];
+    saveToHistory();
+    await loadMusic();
+  }
+
+  Future<void> playPrevious() async {
+    if (!hasPrevious) {
+      await seekTo(Duration.zero);
+      return;
+    }
+    currentIndex.value -= 1;
+    music = queue[currentIndex.value];
+    saveToHistory();
+    await loadMusic();
   }
 
   void saveToHistory() {

@@ -53,7 +53,7 @@ class MusicDetailPage extends GetView<MusicDetailController> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(controller.music.title),
+        title: Obx(() => Text(controller.music.title)),
         centerTitle: true,
       ),
       body: Obx(
@@ -113,7 +113,8 @@ class MusicDetailPage extends GetView<MusicDetailController> {
                 child: Column(
                   children: [
                     LinearProgressIndicator(
-                      value: (controller.downloadTask.value!.progress / 100).clamp(0.0, 1.0),
+                      value: (controller.downloadTask.value!.progress / 100)
+                          .clamp(0.0, 1.0),
                       color: Colors.green,
                       backgroundColor: Colors.white24,
                     ),
@@ -180,7 +181,56 @@ class MusicDetailPage extends GetView<MusicDetailController> {
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: controller.hasPrevious
+                      ? controller.playPrevious
+                      : null,
+                  icon: const Icon(Icons.skip_previous_rounded),
+                  color: Colors.white,
+                  iconSize: 40,
+                ),
+                IconButton(
+                  onPressed: () => controller.seekRelative(-10),
+                  icon: const Icon(Icons.replay_10_rounded),
+                  color: Colors.white,
+                  iconSize: 36,
+                ),
+                controller.isLoading.value
+                    ? const SizedBox(
+                  width: 90,
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.green),
+                  ),
+                )
+                    : IconButton(
+                  iconSize: 90,
+                  color: Colors.green,
+                  icon: Icon(
+                    controller.isPlaying.value
+                        ? Icons.pause_circle_filled
+                        : Icons.play_circle_fill,
+                  ),
+                  onPressed: controller.togglePlay,
+                ),
+                IconButton(
+                  onPressed: () => controller.seekRelative(10),
+                  icon: const Icon(Icons.forward_10_rounded),
+                  color: Colors.white,
+                  iconSize: 36,
+                ),
+                IconButton(
+                  onPressed: controller.hasNext ? controller.playNext : null,
+                  icon: const Icon(Icons.skip_next_rounded),
+                  color: Colors.white,
+                  iconSize: 40,
+                ),
+              ],
+            ),
 
             if (controller.playbackMessage.value.isNotEmpty)
               Padding(
@@ -194,18 +244,7 @@ class MusicDetailPage extends GetView<MusicDetailController> {
             if (controller.playbackMessage.value.isNotEmpty)
               const SizedBox(height: 12),
 
-            controller.isLoading.value
-                ? const CircularProgressIndicator(color: Colors.green)
-                : IconButton(
-                    iconSize: 90,
-                    color: Colors.green,
-                    icon: Icon(
-                      controller.isPlaying.value
-                          ? Icons.pause_circle_filled
-                          : Icons.play_circle_fill,
-                    ),
-                    onPressed: controller.togglePlay,
-                  ),
+
           ],
         ),
       ),

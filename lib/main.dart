@@ -12,7 +12,7 @@ import 'data/services/notification_service.dart';
 
 import 'package:just_audio_background/just_audio_background.dart';
 
-import 'modules/download/download_manager_service.dart';
+import 'data/services/download_manager_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

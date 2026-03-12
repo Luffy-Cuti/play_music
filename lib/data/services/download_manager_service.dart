@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../data/models/music_model.dart';
-import 'download_task_model.dart';
+import '../models/music_model.dart';
+import '../models/download_task_model.dart';
 
 
 

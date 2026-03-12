@@ -199,7 +199,14 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                         onTap: () {
-                          Get.toNamed(AppRoutes.DETAIL, arguments: music);
+                          Get.toNamed(
+                            AppRoutes.DETAIL,
+                            arguments: {
+                              'music': music,
+                              'queue': controller.musicList.toList(),
+                              'index': index,
+                            },
+                          );
                         },
                       ),
                     );
