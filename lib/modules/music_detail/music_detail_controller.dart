@@ -23,6 +23,7 @@ class MusicDetailController extends GetxController {
   Rx<Duration> duration = Duration.zero.obs;
   Rxn<DownloadTaskModel> downloadTask = Rxn<DownloadTaskModel>();
   RxInt currentIndex = 0.obs;
+  RxDouble playbackSpeed = 1.0.obs;
 
   late MusicModel music;
   late List<MusicModel> queue;
@@ -120,6 +121,7 @@ class MusicDetailController extends GetxController {
         }
       }
       await player.play();
+      await player.setSpeed(playbackSpeed.value);
     } catch (e) {
       debugPrint('LOAD ERROR for "${music.title}" (${music.url}): $e');
       playbackMessage.value =
@@ -196,6 +198,10 @@ class MusicDetailController extends GetxController {
 
   Future<void> seekTo(Duration newPosition) async {
     await player.seek(newPosition);
+  }
+  Future<void> setPlaybackSpeed(double speed) async {
+    playbackSpeed.value = speed;
+    await player.setSpeed(speed);
   }
   Future<void> seekRelative(int seconds) async {
     final total = duration.value;

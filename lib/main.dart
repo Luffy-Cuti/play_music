@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/rendering.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,7 @@ import 'data/services/download_manager_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Object? startupError;
+  debugPaintSizeEnabled = false;
 
   try {
     await Firebase.initializeApp();
