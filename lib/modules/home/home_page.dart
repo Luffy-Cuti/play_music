@@ -43,15 +43,13 @@ class HomePage extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Row(
-                  children: const [
-                    Icon(Icons.search, color: Colors.grey),
-                    SizedBox(width: 10),
-                    Text(
-                      "Search music...",
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
+                child: TextField(
+                  onChanged: (value) => controller.searchQuery.value = value,
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.search, color: Colors.grey),
+                    hintText: "Search music...",
+                    border: InputBorder.none,
+                  ),
                 ),
               ),
 
@@ -140,9 +138,9 @@ class HomePage extends StatelessWidget {
                 () => ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.musicList.length,
+                  itemCount: controller.filteredMusicList.length,
                   itemBuilder: (context, index) {
-                    final music = controller.musicList[index];
+                    final music = controller.filteredMusicList[index];
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 15),
@@ -203,7 +201,7 @@ class HomePage extends StatelessWidget {
                             AppRoutes.DETAIL,
                             arguments: {
                               'music': music,
-                              'queue': controller.musicList.toList(),
+                              'queue': controller.filteredMusicList.toList(),
                               'index': index,
                             },
                           );

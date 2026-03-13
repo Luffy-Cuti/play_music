@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../data/models/music_model.dart';
 
 class HomeController extends GetxController {
+  final searchQuery = ''.obs;
   final musicList = <MusicModel>[
     MusicModel(
       id: 'local_1',
@@ -31,4 +32,15 @@ class HomeController extends GetxController {
     ),
   ].obs;
 
+  List<MusicModel> get filteredMusicList {
+    final keyword = searchQuery.value.trim().toLowerCase();
+    if (keyword.isEmpty) {
+      return musicList;
+    }
+
+    return musicList.where((music) {
+      return music.title.toLowerCase().contains(keyword) ||
+          music.artist.toLowerCase().contains(keyword);
+    }).toList();
+  }
 }
