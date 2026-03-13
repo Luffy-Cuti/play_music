@@ -53,12 +53,23 @@ class MusicDetailPage extends GetView<MusicDetailController> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Obx(() => Text(controller.music.title)),
+        title: Obx(
+          () => Text(
+            controller.isMusicReady.value
+                ? controller.music.title
+                : 'Đang tải...',
+          ),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Obx(
-          () => SingleChildScrollView(
+        child: Obx(() {
+          if (!controller.isMusicReady.value) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.green),
+            );
+          }
+          return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Column(
               children: [
@@ -298,8 +309,8 @@ class MusicDetailPage extends GetView<MusicDetailController> {
                 const SizedBox(height: 16),
               ],
             ),
-          ),
-        ),
+          );
+        }),
       ),
     );
   }

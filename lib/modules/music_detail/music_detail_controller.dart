@@ -18,6 +18,7 @@ class MusicDetailController extends GetxController {
 
   RxBool isPlaying = false.obs;
   RxBool isLoading = true.obs;
+  RxBool isMusicReady = false.obs;
   RxString playbackMessage = ''.obs;
   Rx<Duration> position = Duration.zero.obs;
   Rx<Duration> duration = Duration.zero.obs;
@@ -75,11 +76,13 @@ class MusicDetailController extends GetxController {
       }
 
       music = queue[currentIndex.value];
+      isMusicReady.value = true;
       return;
     }
 
     music = args as MusicModel;
     queue = <MusicModel>[music];
+    isMusicReady.value = true;
   }
 
   void _syncDownloadTask() {
@@ -96,6 +99,7 @@ class MusicDetailController extends GetxController {
       if (downloadedPath != null && File(downloadedPath).existsSync()) {
         await player.setAudioSource(
           AudioSource.uri(Uri.file(downloadedPath), tag: _mediaItem),
+          preload: false,
         );
         playbackMessage.value = 'Đang phát từ bản tải offline';
       } else {
@@ -110,24 +114,27 @@ class MusicDetailController extends GetxController {
               Uri.file(source.replaceFirst('file://', '')),
               tag: _mediaItem,
             ),
+            preload: false,
           );
         } else if (source.startsWith('http://') ||
             source.startsWith('https://')) {
           await player.setAudioSource(
             AudioSource.uri(Uri.parse(source), tag: _mediaItem),
+            preload: false,
           );
         } else {
           await _setAssetWithFallback('assets/audio/Shape of you.mp3');
         }
       }
-      await player.play();
+
       await player.setSpeed(playbackSpeed.value);
+      await player.pause();
     } catch (e) {
       debugPrint('LOAD ERROR for "${music.title}" (${music.url}): $e');
       playbackMessage.value =
           'Không phát được bài đã chọn. Đã chuyển sang bản dự phòng.';
       await _setAssetWithFallback('assets/audio/Shape of you.mp3');
-      await player.play();
+      await player.pause();
     } finally {
       isLoading.value = false;
       _syncDownloadTask();
