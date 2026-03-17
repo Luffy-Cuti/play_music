@@ -24,7 +24,7 @@ class RegisterController extends GetxController {
 
       await credential.user!.reload();
 
-      Get.snackbar("Success", "Account created successfully 🎉");
+      Get.snackbar("Success", "Account created successfully");
 
       Get.offAllNamed(AppRoutes.HOME);
     } on FirebaseAuthException catch (e) {
