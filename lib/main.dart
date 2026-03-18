@@ -9,11 +9,18 @@ import 'core/localization/app_translation.dart';
 import 'core/routes/app_pages.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'data/services/auth_controller.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'data/services/notification_service.dart';
 
 import 'package:just_audio_background/just_audio_background.dart';
 
 import 'data/services/download_manager_service.dart';
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +29,7 @@ void main() async {
 
   try {
     await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     await GetStorage.init();
     await JustAudioBackground.init(
       androidNotificationChannelId: 'com.example.play_music.channel.audio',

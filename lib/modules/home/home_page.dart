@@ -1,6 +1,7 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../data/services/auth_controller.dart';
 import '../../data/services/notification_service.dart';
@@ -30,6 +31,31 @@ class HomePage extends StatelessWidget {
                   Text(
                     "Discover",
                     style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  ),
+                  Obx(
+                    () => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: controller.isFcmReady.value
+                            ? Colors.green.withOpacity(0.12)
+                            : Colors.orange.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        controller.isFcmReady.value
+                            ? 'FCM ready'
+                            : 'FCM pending',
+                        style: TextStyle(
+                          color: controller.isFcmReady.value
+                              ? Colors.green.shade700
+                              : Colors.orange.shade800,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -92,6 +118,90 @@ class HomePage extends StatelessWidget {
               ),
 
               const SizedBox(height: 25),
+              const Text(
+                "Firebase Push Test",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              const SizedBox(height: 10),
+              Obx(
+                () => Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Topic nhận tin: new_music_updates',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        controller.fcmToken.value.isEmpty
+                            ? 'Chưa lấy được FCM token. Bấm refresh sau khi cấp quyền thông báo.'
+                            : controller.fcmToken.value,
+                        style: TextStyle(
+                          color: controller.fcmToken.value.isEmpty
+                              ? Colors.grey.shade600
+                              : Colors.black87,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: controller.refreshFcmToken,
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Refresh token'),
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: controller.fcmToken.value.isEmpty
+                                ? null
+                                : () async {
+                                    await Clipboard.setData(
+                                      ClipboardData(
+                                        text: controller.fcmToken.value,
+                                      ),
+                                    );
+                                    Get.snackbar(
+                                      'Đã copy',
+                                      'FCM token đã được copy để test bằng Firebase Console.',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                    );
+                                  },
+                            icon: const Icon(Icons.copy),
+                            label: const Text('Copy token'),
+                          ),
+                          ElevatedButton.icon(
+                            onPressed: controller.sendNewSongTestNotification,
+                            icon: const Icon(Icons.notifications_active),
+                            label: const Text('Test bài hát mới'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Payload gợi ý: title="Có bài hát mới", body="Tên bài hát - ca sĩ vừa lên sóng".',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
 
               const Text(
                 "Dev Tools",
@@ -117,7 +227,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        NotificationService.showNotification();
+                        NotificationService.showNowPlayingNotification();
                       },
                       child: const Text("Notify"),
                     ),
