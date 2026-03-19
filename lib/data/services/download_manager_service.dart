@@ -9,13 +9,12 @@ import 'package:path_provider/path_provider.dart';
 import '../models/music_model.dart';
 import '../models/download_task_model.dart';
 
-
-
 class DownloadManagerService extends GetxService {
   static const _storageKey = 'download_tasks';
 
   final box = GetStorage();
-  final RxMap<String, DownloadTaskModel> tasks = <String, DownloadTaskModel>{}.obs;
+  final RxMap<String, DownloadTaskModel> tasks =
+      <String, DownloadTaskModel>{}.obs;
 
   final Map<String, StreamSubscription<List<int>>> _activeSubscriptions = {};
 
@@ -80,7 +79,9 @@ class DownloadManagerService extends GetxService {
     }
 
     if (current != null) {
-      _updateTask(current.copyWith(status: 'canceled', progress: 0, localPath: null));
+      _updateTask(
+        current.copyWith(status: 'canceled', progress: 0, localPath: null),
+      );
     }
   }
 
@@ -104,7 +105,9 @@ class DownloadManagerService extends GetxService {
         ),
       );
     } catch (e) {
-      _updateTask(tasks[songId]!.copyWith(status: 'failed', error: e.toString()));
+      _updateTask(
+        tasks[songId]!.copyWith(status: 'failed', error: e.toString()),
+      );
     }
   }
 
@@ -132,13 +135,18 @@ class DownloadManagerService extends GetxService {
 
       final completer = Completer<void>();
       final subscription = response.listen(
-            (chunk) {
+        (chunk) {
           received += chunk.length;
           sink!.add(chunk);
 
           if (total > 0) {
             final progress = ((received / total) * 100).clamp(0, 100).toInt();
-            _updateTask(tasks[songId]!.copyWith(progress: progress, localPath: outFile.path));
+            _updateTask(
+              tasks[songId]!.copyWith(
+                progress: progress,
+                localPath: outFile.path,
+              ),
+            );
           }
         },
         onDone: () async {
@@ -158,7 +166,9 @@ class DownloadManagerService extends GetxService {
         onError: (e) async {
           await sink?.close();
           _activeSubscriptions.remove(songId);
-          _updateTask(tasks[songId]!.copyWith(status: 'failed', error: e.toString()));
+          _updateTask(
+            tasks[songId]!.copyWith(status: 'failed', error: e.toString()),
+          );
           completer.completeError(e);
         },
         cancelOnError: true,
@@ -169,7 +179,9 @@ class DownloadManagerService extends GetxService {
     } catch (e) {
       await sink?.close();
       _activeSubscriptions.remove(songId);
-      _updateTask(tasks[songId]!.copyWith(status: 'failed', error: e.toString()));
+      _updateTask(
+        tasks[songId]!.copyWith(status: 'failed', error: e.toString()),
+      );
     } finally {
       client?.close(force: true);
     }
@@ -183,7 +195,9 @@ class DownloadManagerService extends GetxService {
 
   String _extractFileName(String url) {
     final uri = Uri.parse(url);
-    final name = uri.pathSegments.isNotEmpty ? uri.pathSegments.last : 'audio.mp3';
+    final name = uri.pathSegments.isNotEmpty
+        ? uri.pathSegments.last
+        : 'audio.mp3';
     return name.isEmpty ? 'audio.mp3' : name;
   }
 

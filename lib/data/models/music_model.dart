@@ -9,7 +9,7 @@ class MusicModel {
     required this.id,
     required this.title,
     required this.artist,
-    required this.image,
+    required this.image ,
     required this.url,
   });
 }
