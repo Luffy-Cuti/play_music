@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:play_msuci/data/services/root_page.dart';
+import 'package:provider/provider.dart';
 import 'core/localization/app_translation.dart';
 import 'core/routes/app_pages.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -13,7 +14,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'data/services/notification_service.dart';
 
 import 'package:just_audio_background/just_audio_background.dart';
-
+import 'core/state/app_state.dart';
 import 'data/services/download_manager_service.dart';
 
 @pragma('vm:entry-point')
@@ -49,7 +50,12 @@ void main() async {
     startupError = e;
   }
 
-  runApp(MyApp(startupError: startupError));
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppState(),
+      child: MyApp(startupError: startupError),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -73,22 +79,34 @@ class MyApp extends StatelessWidget {
         ),
       );
     }
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: RootPage(),
-      getPages: AppPages.pages,
-      translations: AppTranslation(),
-      locale: const Locale('vi'),
-      fallbackLocale: const Locale('en'),
-
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.light,
-        ),
-        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-      ),
+    return Consumer<AppState>(
+      builder: (context, appState, _) {
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: RootPage(),
+          getPages: AppPages.pages,
+          translations: AppTranslation(),
+          locale: const Locale('vi'),
+          fallbackLocale: const Locale('en'),
+          themeMode: appState.themeMode,
+          theme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple,
+              brightness: Brightness.light,
+            ),
+            appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+          ),
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple,
+              brightness: Brightness.dark,
+            ),
+            appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
+          ),
+        );
+      },
     );
   }
 }

@@ -4,6 +4,8 @@ import '../../core/routes/app_pages.dart';
 import '../../data/services/auth_controller.dart';
 import 'setting_controller.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:provider/provider.dart';
+import '../../core/state/app_state.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class SettingPage extends StatelessWidget {
@@ -196,6 +198,13 @@ class SettingPage extends StatelessWidget {
                     trailing: const Icon(Icons.more_horiz),
                   );
                 },
+              ),
+            ),
+            Consumer<AppState>(
+              builder: (context, appState, _) => SwitchListTile(
+                title: const Text("Dark mode"),
+                value: appState.themeMode == ThemeMode.dark,
+                onChanged: (_) => appState.toggleTheme(),
               ),
             ),
 
