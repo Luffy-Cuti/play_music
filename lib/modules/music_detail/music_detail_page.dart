@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'music_detail_controller.dart';
 import '../../core/routes/app_pages.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class MusicDetailPage extends GetView<MusicDetailController> {
   const MusicDetailPage({super.key});
@@ -16,12 +17,27 @@ class MusicDetailPage extends GetView<MusicDetailController> {
     final image = controller.music.image?.trim() ?? '';
 
     if (image.startsWith('http://') || image.startsWith('https://')) {
-      return Image.network(
-        image,
+      return CachedNetworkImage(
+        imageUrl: image,
         height: 250,
         width: 250,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => _fallbackArtwork(),
+        fadeInDuration: const Duration(milliseconds: 180),
+        placeholder: (_, __) => Container(
+          height: 250,
+          width: 250,
+          color: Colors.grey.shade900,
+          alignment: Alignment.center,
+          child: const SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              color: Colors.green,
+              strokeWidth: 2.5,
+            ),
+          ),
+        ),
+        errorWidget: (_, __, ___) => _fallbackArtwork(),
       );
     }
     if (image.isNotEmpty) {

@@ -4,6 +4,7 @@ import '../../core/routes/app_pages.dart';
 import '../../data/services/auth_controller.dart';
 import 'setting_controller.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SettingPage extends StatelessWidget {
   final controller = Get.put(SettingController());

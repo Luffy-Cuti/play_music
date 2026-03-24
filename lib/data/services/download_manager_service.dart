@@ -206,6 +206,7 @@ class DownloadManagerService extends GetxService {
     _persistTasks();
   }
 
+
   void _restoreTasks() {
     final raw = box.read(_storageKey);
     if (raw is Map) {
