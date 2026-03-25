@@ -147,13 +147,11 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        controller.fcmToken.value.isEmpty
-                            ? 'Chưa lấy được FCM token. Bấm refresh sau khi cấp quyền thông báo.'
-                            : controller.fcmToken.value,
+                        controller.isFcmReady.value
+                            ? 'FCM đã sẵn sàng để nhận push notification.'
+                            : 'FCM chưa sẵn sàng. Hãy cấp quyền thông báo để tiếp tục.',
                         style: TextStyle(
-                          color: controller.fcmToken.value.isEmpty
-                              ? Colors.grey.shade600
-                              : Colors.black87,
+                          color: Colors.grey.shade700,
                           fontSize: 13,
                         ),
                       ),
@@ -165,25 +163,7 @@ class HomePage extends StatelessWidget {
                           ElevatedButton.icon(
                             onPressed: controller.refreshFcmToken,
                             icon: const Icon(Icons.refresh),
-                            label: const Text('Refresh token'),
-                          ),
-                          OutlinedButton.icon(
-                            onPressed: controller.fcmToken.value.isEmpty
-                                ? null
-                                : () async {
-                                    await Clipboard.setData(
-                                      ClipboardData(
-                                        text: controller.fcmToken.value,
-                                      ),
-                                    );
-                                    Get.snackbar(
-                                      'Đã copy',
-                                      'FCM token đã được copy để test bằng Firebase Console.',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                    );
-                                  },
-                            icon: const Icon(Icons.copy),
-                            label: const Text('Copy token'),
+                            label: const Text('Làm mới FCM'),
                           ),
                           ElevatedButton.icon(
                             onPressed: controller.sendNewSongTestNotification,
@@ -193,10 +173,6 @@ class HomePage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        'Payload gợi ý: title="Có bài hát mới", body="Tên bài hát - ca sĩ vừa lên sóng".',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
                     ],
                   ),
                 ),

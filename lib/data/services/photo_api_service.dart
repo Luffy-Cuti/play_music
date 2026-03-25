@@ -4,8 +4,8 @@ import '../models/music_model.dart';
 
 class PhotoApiService {
   PhotoApiService({Dio? dio})
-      : _dio =
-      dio ??
+    : _dio =
+          dio ??
           Dio(
             BaseOptions(
               baseUrl: 'https://jsonplaceholder.typicode.com',
@@ -15,19 +15,17 @@ class PhotoApiService {
             ),
           ) {
     _dio.interceptors.add(
-      LogInterceptor(
-        requestBody: false,
-        responseBody: false,
-      ),
+      LogInterceptor(requestBody: false, responseBody: false),
     );
   }
 
   final Dio _dio;
 
   Future<List<MusicModel>> getPhotoTracks({int limit = 12}) async {
-    final response = await _dio.get<List<dynamic>>('/photos', queryParameters: {
-      '_limit': limit,
-    });
+    final response = await _dio.get<List<dynamic>>(
+      '/photos',
+      queryParameters: {'_limit': limit},
+    );
 
     final data = response.data ?? <dynamic>[];
 
