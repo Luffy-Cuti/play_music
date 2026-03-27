@@ -206,10 +206,12 @@ class MusicDetailController extends GetxController {
   Future<void> seekTo(Duration newPosition) async {
     await player.seek(newPosition);
   }
+
   Future<void> setPlaybackSpeed(double speed) async {
     playbackSpeed.value = speed;
     await player.setSpeed(speed);
   }
+
   Future<void> seekRelative(int seconds) async {
     final total = duration.value;
     final target = position.value + Duration(seconds: seconds);
