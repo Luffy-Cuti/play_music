@@ -81,6 +81,9 @@ class MyApp extends StatelessWidget {
     }
     return Consumer<AppState>(
       builder: (context, appState, _) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          NotificationService.flushPendingNavigation();
+        });
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           home: RootPage(),

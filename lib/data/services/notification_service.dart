@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../../core/routes/app_pages.dart';
 
 class NotificationService {
   NotificationService._();
@@ -23,6 +25,7 @@ class NotificationService {
       );
 
   static String? _fcmToken;
+  static Map<String, dynamic>? _pendingNavigationData;
 
   static String? get fcmToken => _fcmToken;
 
@@ -41,7 +44,12 @@ class NotificationService {
       macOS: darwinInit,
     );
 
-    await _notifications.initialize(settings);
+    await _notifications.initialize(
+      settings,
+      onDidReceiveNotificationResponse: _onLocalNotificationTap,
+      onDidReceiveBackgroundNotificationResponse:
+      _onDidReceiveBackgroundNotificationResponse,
+    );
     final androidPlugin = _notifications
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -107,11 +115,16 @@ class NotificationService {
         data['body'] ??
         'Mở app để nghe bản phát hành mới nhất.';
 
-    await _showLocalNotification(title: '$title', body: '$body');
+    await _showLocalNotification(
+      title: '$title',
+      body: '$body',
+      payload: _serializePayload(data),
+    );
   }
 
   static void _handleNotificationOpen(RemoteMessage message) {
     debugPrint('Notification tapped with payload: ${message.data}');
+    _navigateFromData(message.data);
   }
 
   static Future<void> showNowPlayingNotification() async {
@@ -128,8 +141,107 @@ class NotificationService {
     await _showLocalNotification(
       title: '🎧 Có bài hát mới',
       body: '$songTitle - $artistName vừa được thêm vào thư viện.',
-      payload: 'type=new_song&song=$songTitle&artist=$artistName',
+      payload: _serializePayload({
+        'route': AppRoutes.HOME,
+        'type': 'new_song',
+        'song': songTitle,
+        'artist': artistName,
+      }),
     );
+  }
+  static void flushPendingNavigation() {
+    final pending = _pendingNavigationData;
+    if (pending == null) {
+      return;
+    }
+    if (!_isNavigatorReady()) {
+      return;
+    }
+    _pendingNavigationData = null;
+    _performNavigation(pending);
+  }
+
+  static void _onLocalNotificationTap(NotificationResponse response) {
+    final data = _deserializePayload(response.payload);
+    if (data.isEmpty) {
+      return;
+    }
+    _navigateFromData(data);
+  }
+
+  @pragma('vm:entry-point')
+  static void _onDidReceiveBackgroundNotificationResponse(
+      NotificationResponse response,
+      ) {
+    debugPrint('Local notification tapped in background: ${response.payload}');
+  }
+
+  static void _navigateFromData(Map<String, dynamic> data) {
+    if (data.isEmpty) {
+      return;
+    }
+    if (!_isNavigatorReady()) {
+      _pendingNavigationData = Map<String, dynamic>.from(data);
+      return;
+    }
+    _performNavigation(data);
+  }
+
+  static void _performNavigation(Map<String, dynamic> data) {
+    final route = data['route']?.toString().trim();
+    if (route == null || route.isEmpty || !_isAllowedRoute(route)) {
+      Get.toNamed(AppRoutes.HOME);
+      return;
+    }
+
+    if (route == AppRoutes.WEBVIEW) {
+      final url = data['url']?.toString().trim();
+      if (url == null || url.isEmpty) {
+        Get.toNamed(AppRoutes.HOME);
+        return;
+      }
+      Get.toNamed(
+        route,
+        arguments: {
+          'title': data['title']?.toString() ?? 'Thông báo',
+          'url': url,
+        },
+      );
+      return;
+    }
+
+    Get.toNamed(route, arguments: data);
+  }
+
+  static bool _isNavigatorReady() => Get.key.currentState != null;
+
+  static bool _isAllowedRoute(String route) {
+    const allowedRoutes = {
+      AppRoutes.HOME,
+      AppRoutes.SETTING,
+      AppRoutes.WEBVIEW,
+      AppRoutes.LOGIN,
+      AppRoutes.REGISTER,
+    };
+    return allowedRoutes.contains(route);
+  }
+
+  static String? _serializePayload(Map<String, dynamic> data) {
+    if (data.isEmpty) {
+      return null;
+    }
+    final normalized = <String, String>{};
+    data.forEach((key, value) {
+      normalized[key] = '$value';
+    });
+    return Uri(queryParameters: normalized).query;
+  }
+
+  static Map<String, dynamic> _deserializePayload(String? payload) {
+    if (payload == null || payload.trim().isEmpty) {
+      return <String, dynamic>{};
+    }
+    return Uri.splitQueryString(payload);
   }
 
   static Future<void> _showLocalNotification({
