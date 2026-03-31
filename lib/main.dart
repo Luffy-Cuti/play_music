@@ -12,6 +12,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'data/services/auth_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'data/services/notification_service.dart';
+import 'data/services/remote_config_service.dart';
 
 import 'package:just_audio_background/just_audio_background.dart';
 import 'core/state/app_state.dart';
@@ -38,6 +39,7 @@ void main() async {
       androidNotificationOngoing: true,
     );
     await NotificationService.init();
+    await RemoteConfigService.init();
     Get.put(AuthController());
     Get.put(DownloadManagerService(), permanent: true);
 

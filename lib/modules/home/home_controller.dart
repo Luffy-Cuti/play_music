@@ -5,12 +5,15 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../data/models/music_model.dart';
+import '../../data/services/remote_config_service.dart';
 import '../../data/services/notification_service.dart';
 
 class HomeController extends GetxController {
   final searchQuery = ''.obs;
   final fcmToken = ''.obs;
   final isFcmReady = false.obs;
+  final promoTitle = ''.obs;
+  final promoSubtitle = ''.obs;
   final musicList = <MusicModel>[
     MusicModel(
       id: 'local_1',
@@ -39,6 +42,11 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     syncNotificationState();
+    loadRemoteConfigValues();
+  }
+  Future<void> initRemoteConfig() async {
+    await RemoteConfigService.refresh();
+    loadRemoteConfigValues();
   }
 
   List<MusicModel> get filteredMusicList {
@@ -52,6 +60,23 @@ class HomeController extends GetxController {
           music.artist.toLowerCase().contains(keyword);
     }).toList();
   }
+  void loadRemoteConfigValues() {
+    promoTitle.value = RemoteConfigService.promoTitle;
+    promoSubtitle.value = RemoteConfigService.promoSubtitle;
+  }
+
+  Future<void> refreshRemoteConfig() async {
+    final activated = await RemoteConfigService.refresh();
+    loadRemoteConfigValues();
+    Get.snackbar(
+      'Firebase Remote Config',
+      activated
+          ? 'Đã cập nhật cấu hình mới từ Firebase.'
+          : 'Không có cấu hình mới hoặc fetch thất bại. Đang dùng giá trị hiện tại.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
 
   Future<void> syncNotificationState() async {
     final token =

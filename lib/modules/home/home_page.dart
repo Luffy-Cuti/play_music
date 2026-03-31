@@ -81,39 +81,50 @@ class HomePage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "New Album",
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
+              Obx(
+                () => Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              controller.promoSubtitle.value,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            "Happy Than Ever",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(height: 8),
+                            Text(
+                              controller.promoTitle.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(Icons.music_note, color: Colors.white, size: 40),
-                  ],
+                      IconButton(
+                        onPressed: controller.refreshRemoteConfig,
+                        icon: const Icon(Icons.sync, color: Colors.white),
+                        tooltip: 'Làm mới Remote Config',
+                      ),
+                      const Icon(
+                        Icons.music_note,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
