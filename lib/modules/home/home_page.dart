@@ -221,6 +221,16 @@ class HomePage extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => Get.toNamed(AppRoutes.MAP),
+                  icon: const Icon(Icons.map),
+                  label: const Text('Mở Google Map test UI'),
+                ),
+              ),
 
               const SizedBox(height: 25),
 

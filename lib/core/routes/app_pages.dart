@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:play_msuci/modules/register/register_page.dart';
+import '../../data/models/map/map_page.dart';
 import '../../data/models/webview/in_app_webview_page.dart';
 import '../../modules/login/login_page.dart';
 import '../../modules/home/home_page.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const SETTING = '/setting';
   static const REGISTER = '/register';
   static const WEBVIEW = '/webview';
+  static const MAP = '/map';
 }
 
 class AppPages {
@@ -30,5 +32,6 @@ class AppPages {
     GetPage(name: AppRoutes.SETTING, page: () => SettingPage()),
     GetPage(name: AppRoutes.REGISTER, page: () => RegisterPage()),
     GetPage(name: AppRoutes.WEBVIEW, page: () => const InAppWebviewPage()),
+    GetPage(name: AppRoutes.MAP, page: () => const MapPage()),
   ];
 }
