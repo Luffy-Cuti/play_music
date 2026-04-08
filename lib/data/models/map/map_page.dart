@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapPage extends StatefulWidget {
@@ -11,24 +12,75 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   static const LatLng _defaultCenter = LatLng(10.7769, 106.7009);
 
-  final Set<Marker> _markers = {
-    const Marker(
-      markerId: MarkerId('hcmc'),
-      position: _defaultCenter,
-      infoWindow: InfoWindow(
-        title: 'TP.HCM',
-        snippet: 'Demo marker cho Google Maps Flutter',
-      ),
-    ),
-  };
+  late LatLng _currentCenter;
+  late Set<Marker> _markers;
 
   GoogleMapController? _mapController;
   MapType _mapType = MapType.normal;
+
+  void initState() {
+    super.initState();
+    _currentCenter = _defaultCenter;
+    _markers = _buildMarker(_currentCenter);
+    _setCurrentLocation();
+  }
 
   @override
   void dispose() {
     _mapController?.dispose();
     super.dispose();
+  }
+
+  Set<Marker> _buildMarker(LatLng position) {
+    return {
+      Marker(
+        markerId: const MarkerId('current_location'),
+        position: position,
+        infoWindow: const InfoWindow(
+          title: 'Vị trí hiện tại',
+          snippet: 'Lấy từ GPS của thiết bị',
+        ),
+      ),
+    };
+  }
+
+  Future<void> _setCurrentLocation() async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      final current = LatLng(position.latitude, position.longitude);
+      if (!mounted) return;
+
+      setState(() {
+        _currentCenter = current;
+        _markers = _buildMarker(current);
+      });
+      await _mapController?.animateCamera(
+        CameraUpdate.newLatLngZoom(current, 16),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Không lấy được vị trí hiện tại, đang dùng vị trí mặc định.',
+          ),
+        ),
+      );
+    }
   }
 
   void _toggleMapType() {
@@ -37,12 +89,6 @@ class _MapPageState extends State<MapPage> {
           ? MapType.satellite
           : MapType.normal;
     });
-  }
-
-  Future<void> _goToMarker() async {
-    await _mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(_defaultCenter, 15),
-    );
   }
 
   @override
@@ -71,15 +117,16 @@ class _MapPageState extends State<MapPage> {
           ),
           Expanded(
             child: GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: _defaultCenter,
+              initialCameraPosition: CameraPosition(
+                target: _currentCenter,
                 zoom: 14,
               ),
               markers: _markers,
               mapType: _mapType,
-              myLocationButtonEnabled: false,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
               zoomControlsEnabled: false,
-              onMapCreated: (controller) {
+              onMapCreated: (controller) async {
                 _mapController = controller;
               },
             ),
@@ -87,9 +134,9 @@ class _MapPageState extends State<MapPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToMarker,
-        icon: const Icon(Icons.place),
-        label: const Text('Đi tới marker'),
+        onPressed: _setCurrentLocation,
+        icon: const Icon(Icons.my_location),
+        label: const Text('Lấy vị trí máy'),
       ),
     );
   }
