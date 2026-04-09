@@ -18,6 +18,7 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? _mapController;
   MapType _mapType = MapType.normal;
 
+  @override
   void initState() {
     super.initState();
     _currentCenter = _defaultCenter;

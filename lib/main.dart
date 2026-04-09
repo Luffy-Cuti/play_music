@@ -23,7 +23,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Object? startupError;
